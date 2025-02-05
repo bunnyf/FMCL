@@ -1,0 +1,6 @@
+target_url: "https://example.com/financial-data"
+fetch_interval: 5s
+max_display: 5
+database_path: "data/fmt.db"
+log_path: "logs/app.log"
+notification_methods: ["console"]
