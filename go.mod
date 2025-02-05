@@ -1,4 +1,4 @@
-module github.com/yourusername/fmt
+module github.com/yourusername/fmcl
 
 go 1.20
 

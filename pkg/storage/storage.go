@@ -5,7 +5,7 @@ import (
 	_ "github.com/mattn/go-sqlite3"
 	"os"
 	"path/filepath"
-	"github.com/yourusername/fmt/pkg/parser"
+	"github.com/yourusername/fmcl/pkg/parser"
 )
 
 type DB struct {

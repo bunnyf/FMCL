@@ -16,8 +16,8 @@ import (
 	"github.com/eiannone/keyboard"
 	"gopkg.in/yaml.v3"
 
-	"github.com/yourusername/fmt/pkg/htmlfetcher"
-	"github.com/yourusername/fmt/pkg/parser"
+	"github.com/yourusername/fmcl/pkg/htmlfetcher"
+	"github.com/yourusername/fmcl/pkg/parser"
 )
 
 // 格式化字符串到指定宽度
