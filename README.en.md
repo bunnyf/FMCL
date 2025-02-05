@@ -1,78 +1,78 @@
-# Financial Market Command Line (FMCL)
+# FMCL (Financial Market Calendar Lite)
 
 English | [简体中文](README.md)
 
-A command-line financial market monitoring tool written in Go, providing real-time display of important economic indicators and central bank rates. Developed with Go 1.20+.
-
-[![GitHub](https://img.shields.io/github/license/bunnyf/FMCL)](https://github.com/bunnyf/FMCL)
-[![Go Version](https://img.shields.io/github/go-mod/go-version/bunnyf/FMCL)](https://github.com/bunnyf/FMCL)
-[![Latest Release](https://img.shields.io/github/v/release/bunnyf/FMCL)](https://github.com/bunnyf/FMCL/releases)
+## Introduction
+FMCL is a lightweight terminal-based financial market calendar application that displays real-time financial event information with a Text User Interface (TUI).
 
 ## Features
-
-- Real-time monitoring of financial data and key economic indicators
-- Multiple display modes (High importance only, Rate information, All data)
-- Automatic data refresh with configurable intervals
-- Keyboard shortcut support
-- Status bar with system status and countdown timer
-- Pause/Resume data refresh functionality
+- Real-time financial calendar events display
+- Multiple display modes:
+  - High importance events only
+  - All events
+  - High importance + rates information
+  - High importance + important events
+- Color-coded importance levels
+- Live countdown timer for data refresh
+- Keyboard shortcuts for easy operation
 
 ## Keyboard Shortcuts
-
-- `q`: Exit program
+- `q`: Quit application
 - `r`: Force refresh data
-- `p`: Pause/Resume data refresh
-- `m`: Toggle display mode
-- `h`: Show help information
+- `p`: Pause/resume auto-refresh
+- `m`: Switch display mode
+- `h`: Show/hide help menu
+- `ESC`: Close help menu
 
 ## Configuration
-
-### Config File
-
-The configuration file is located at `config.yaml` and supports the following options:
-
+The application can be configured through `config.yaml`:
 ```yaml
-# Data refresh interval (seconds)
-refresh_interval: 15
-
-# Default display mode
-# 0: High importance only
-# 1: Rate information
-# 2: All data
-default_display_mode: 0
-
-# Terminal display settings
-display:
-  # Show timestamp with data
-  show_timestamp: true
-  # Use colored output
-  use_color: true
-  # Terminal width in characters
-  terminal_width: 120
+refresh_interval: 15      # Data refresh interval in seconds
+default_display_mode: 0   # Default display mode (0-3)
+ui:
+  time_width: 8          # Width of time column
+  importance_width: 6    # Width of importance column
+  value_width: 12        # Width of value columns
 ```
 
-### Configuration Details
-
-1. `refresh_interval`
-   - Time interval for automatic data refresh (seconds)
-   - Recommended range: 15-60 seconds
-   - Use shorter intervals (15-30s) for critical data monitoring
-   - Use longer intervals (60s) for general use to reduce resource usage
-
-2. `default_display_mode`
-   - Default display mode when starting the program
-   - Available options:
-     - 0: High importance only (recommended for daily monitoring)
-     - 1: Rate information
-     - 2: All data (for detailed information review)
-
-3. `display`
-   - `show_timestamp`: Enable/disable timestamp display with data
-   - `use_color`: Enable/disable colored output (recommended to keep enabled)
-   - `terminal_width`: Terminal display width for alignment and formatting
-
-## System Requirements
-
+## Requirements
 - Go 1.20 or higher
 - Terminal with ANSI escape sequence support
-- Recommended terminal width: 120 characters for optimal display
+- Terminal width of 120 characters recommended for optimal display
+
+## Installation
+```bash
+git clone https://github.com/your-username/FMCL.git
+cd FMCL
+go mod download
+```
+
+## Running
+```bash
+go run cmd/main/main.go
+```
+
+## Display Modes
+1. High Importance Only (Mode 0)
+   - Shows only events marked as high importance
+2. All Events (Mode 1)
+   - Displays all financial calendar events
+3. High Importance + Rates (Mode 2)
+   - Shows high importance events and central bank rates
+4. High Importance + Important Events (Mode 3)
+   - Shows high importance events and other important market events
+
+## UI Layout
+- Header: Shows application name and startup time
+- Main Display: Financial calendar events in tabular format
+- Status Bar: Current mode, running status, and refresh countdown
+- Help Menu: Accessible via 'h' key, closeable with ESC
+
+## Color Coding
+- High Importance: Red
+- Medium Importance: Yellow
+- Low Importance: White
+- Current Values: Green
+- Time Information: Cyan
+- Headers: Green/Cyan
+- Status Information: Green

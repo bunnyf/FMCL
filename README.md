@@ -76,3 +76,107 @@ display:
 - Go 1.20 或更高版本
 - 支持 ANSI 转义序列的终端
 - 终端窗口宽度建议设置为 120 字符以获得最佳显示效果
+
+## 中英文说明
+
+### FMCL (Financial Market Calendar Lite)
+
+#### Introduction
+FMCL is a lightweight terminal-based financial market calendar application that displays real-time financial event information with a Text User Interface (TUI).
+
+#### Features
+- Real-time financial calendar events display
+- Multiple display modes:
+  - High importance events only
+  - All events
+  - High importance + rates information
+  - High importance + important events
+- Color-coded importance levels
+- Live countdown timer for data refresh
+- Keyboard shortcuts for easy operation
+
+#### Keyboard Shortcuts
+- `q`: Quit application
+- `r`: Force refresh data
+- `p`: Pause/resume auto-refresh
+- `m`: Switch display mode
+- `h`: Show/hide help menu
+- `ESC`: Close help menu
+
+#### Configuration
+The application can be configured through `config.yaml`:
+```yaml
+refresh_interval: 15      # Data refresh interval in seconds
+default_display_mode: 0   # Default display mode (0-3)
+ui:
+  time_width: 8          # Width of time column
+  importance_width: 6    # Width of importance column
+  value_width: 12        # Width of value columns
+```
+
+#### Requirements
+- Go 1.20 or higher
+
+#### Installation
+```bash
+git clone https://github.com/your-username/FMCL.git
+cd FMCL
+go mod download
+```
+
+#### Running
+```bash
+go run cmd/main/main.go
+```
+
+---
+
+### FMCL (Financial Market Calendar Lite)
+
+#### 简介
+FMCL (Financial Market Calendar Lite) 是一个基于终端的轻量级金融市场日历应用，使用文本用户界面(TUI)展示实时金融事件信息。
+
+#### 功能特点
+- 实时显示财经日历事件
+- 多种显示模式：
+  - 仅显示高重要性事件
+  - 显示所有事件
+  - 高重要性事件+利率信息
+  - 高重要性事件+重要事件
+- 重要性等级颜色区分
+- 实时刷新倒计时
+- 便捷的键盘快捷键
+
+#### 快捷键
+- `q`: 退出程序
+- `r`: 强制刷新数据
+- `p`: 暂停/继续自动刷新
+- `m`: 切换显示模式
+- `h`: 显示/隐藏帮助菜单
+- `ESC`: 关闭帮助菜单
+
+#### 配置
+通过 `config.yaml` 文件进行配置：
+```yaml
+refresh_interval: 15      # 数据刷新间隔（秒）
+default_display_mode: 0   # 默认显示模式（0-3）
+ui:
+  time_width: 8          # 时间列宽度
+  importance_width: 6    # 重要性列宽度
+  value_width: 12        # 数值列宽度
+```
+
+#### 环境要求
+- Go 1.20 或更高版本
+
+#### 安装
+```bash
+git clone https://github.com/your-username/FMCL.git
+cd FMCL
+go mod download
+```
+
+#### 运行
+```bash
+go run cmd/main/main.go
+```

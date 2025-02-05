@@ -21,12 +21,29 @@ import (
 	"github.com/yourusername/fmcl/pkg/parser"
 )
 
-// 格式化字符串到指定宽度
+// 格式化字符串宽度
 func formatWidth(s string, width int) string {
-	if len(s) >= width {
-		return s[:width]
+	if s == "" {
+		return strings.Repeat(" ", width)
 	}
-	return s + strings.Repeat(" ", width-len(s))
+
+	// 移除可能的空格
+	s = strings.TrimSpace(s)
+
+	// 如果字符串长度小于指定宽度，补充空格
+	if len(s) < width {
+		return s + strings.Repeat(" ", width-len(s))
+	}
+
+	// 如果字符串长度大于指定宽度，截断并添加省略号
+	if len(s) > width {
+		if width <= 3 {
+			return s[:width]
+		}
+		return s[:width-3] + "..."
+	}
+
+	return s
 }
 
 // 显示模式
@@ -135,7 +152,7 @@ func loadConfig() (*Config, error) {
 			ImportanceWidth int `yaml:"importance_width"`
 			ValueWidth      int `yaml:"value_width"`
 		}{
-			TimeWidth:       8,
+			TimeWidth:       6,
 			ImportanceWidth: 6,
 			ValueWidth:      12,
 		},
@@ -182,17 +199,33 @@ func displayData(fetcher *htmlfetcher.DefaultFetcher, state *AppState, config *C
 	statusBar.TextStyle.Fg = termui.ColorGreen
 	statusBar.Border = false
 
-	// 获取终端大小
-	termWidth, termHeight := termui.TerminalDimensions()
+	// 获取终端大小并设置布局
+	var termWidth int
+	updateLayout := func() {
+		w, h := termui.TerminalDimensions()
+		if w <= 0 {
+			w = 120
+		}
+		if h <= 0 {
+			h = 30
+		}
+		termWidth = w
+		header.SetRect(0, 0, w, 2)
+		dataList.SetRect(0, 2, w, h-1)
+		statusBar.SetRect(0, h-1, w, h)
+	}
 
-	// 设置布局
-	header.SetRect(0, 0, termWidth, 2)
-	dataList.SetRect(0, 2, termWidth, termHeight-1)
-	statusBar.SetRect(0, termHeight-1, termWidth, termHeight)
+	// 初始化布局
+	updateLayout()
 
 	// 创建帮助菜单（初始不显示）
 	helpMenu := showHelpMenu()
 	showingHelp := false
+
+	// 创建分隔线
+	createSeparator := func() string {
+		return strings.Repeat("─", termWidth-2)
+	}
 
 	updateUI := func() {
 		state.mu.Lock()
@@ -209,7 +242,7 @@ func displayData(fetcher *htmlfetcher.DefaultFetcher, state *AppState, config *C
 			modeStr = "显示高重要性+重要事件"
 		}
 
-		statusBar.Text = fmt.Sprintf("模式: %s | 状态: %s | 下次刷新: %s",
+		statusBar.Text = fmt.Sprintf("%s | %s | 刷新: %s",
 			modeStr,
 			map[bool]string{true: "已暂停", false: "运行中"}[state.isPaused],
 			formatCountdown(state.nextRefreshTime))
@@ -252,7 +285,7 @@ func displayData(fetcher *htmlfetcher.DefaultFetcher, state *AppState, config *C
 			config.UI.ValueWidth, "预测",
 			config.UI.ValueWidth, "公布值",
 			"指标名称"))
-		rows = append(rows, strings.Repeat("-", termWidth-2))
+		rows = append(rows, createSeparator())
 
 		currentTime := ""
 		for _, event := range events {
@@ -262,7 +295,7 @@ func displayData(fetcher *htmlfetcher.DefaultFetcher, state *AppState, config *C
 
 			if event.Time != currentTime {
 				if currentTime != "" {
-					rows = append(rows, strings.Repeat("-", termWidth-2))
+					rows = append(rows, createSeparator())
 				}
 				currentTime = event.Time
 			}
@@ -293,7 +326,7 @@ func displayData(fetcher *htmlfetcher.DefaultFetcher, state *AppState, config *C
 					config.UI.TimeWidth, "时间",
 					config.UI.ImportanceWidth, "重要性",
 					"事件"))
-				rows = append(rows, strings.Repeat("-", termWidth-2))
+				rows = append(rows, createSeparator())
 
 				for _, event := range importantEvents {
 					if event.Importance == "高" || state.displayMode == ModeAll {
@@ -329,7 +362,7 @@ func displayData(fetcher *htmlfetcher.DefaultFetcher, state *AppState, config *C
 				dateWidth, "变动日期",
 				historyWidth, "历史区间",
 				rateWidth, "下次预测"))
-			rows = append(rows, strings.Repeat("-", termWidth-2))
+			rows = append(rows, createSeparator())
 
 			for _, rate := range rates {
 				parts := strings.Split(rate.LastChange, " ")
@@ -382,9 +415,14 @@ func displayData(fetcher *htmlfetcher.DefaultFetcher, state *AppState, config *C
 	// 更新下次刷新时间
 	state.nextRefreshTime = time.Now().Add(time.Duration(config.RefreshInterval) * time.Second)
 
+	uiEvents := termui.PollEvents()
 	for {
 		select {
-		case e := <-termui.PollEvents():
+		case e := <-uiEvents:
+			if strings.HasPrefix(e.ID, "<Mouse") {
+				continue
+			}
+
 			switch e.ID {
 			case "q", "<C-c>":
 				return
@@ -409,6 +447,9 @@ func displayData(fetcher *htmlfetcher.DefaultFetcher, state *AppState, config *C
 					showingHelp = false
 					termui.Render(header, dataList, statusBar)
 				}
+			case "<Resize>":
+				updateLayout()
+				updateUI()
 			}
 		case <-countdownTicker.C:
 			// 更新倒计时

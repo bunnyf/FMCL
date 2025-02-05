@@ -13,7 +13,7 @@ default_display_mode: 0
 # 界面设置
 ui:
   # 时间列宽度
-  time_width: 6
+  time_width: 2
   # 重要性列宽度
   importance_width: 4
   # 数值列宽度（前值、预测、公布值）
